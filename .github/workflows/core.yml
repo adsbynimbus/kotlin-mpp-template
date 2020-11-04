@@ -1,0 +1,40 @@
+name: Core
+
+on:
+  push:
+    tags:
+      - '**'
+
+env:
+  ORG_GRADLE_PROJECT_githubUsername: ${{ github.actor }}
+  ORG_GRADLE_PROJECT_githubPassword: ${{ github.token }}
+
+jobs:
+
+  publish:
+    name: Publish
+    runs-on: macos-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Setup Java
+        uses: actions/setup-java@v1
+        with:
+          java-version: 11
+
+      - name: Cache Gradle and Kotlin packages
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.konan/dependencies
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      - name: Fix Android NDK
+        run: echo "ndk.dir=$ANDROID_HOME/ndk-bundle" > local.properties
+
+      - name: Publish
+        run: gradle publish --no-configure-on-demand --no-watch-fs --no-daemon
