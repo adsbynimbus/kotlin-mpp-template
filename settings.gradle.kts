@@ -1,8 +1,4 @@
 pluginManagement {
-    repositories {
-        gradlePluginPortal()
-        google()
-    }
     val agp: String by settings
     val kgp: String by settings
     resolutionStrategy {
@@ -14,6 +10,17 @@ pluginManagement {
         }
     }
 }
+
+dependencyResolutionManagement {
+    @Suppress("UnstableApiUsage")
+    repositories {
+        google()
+        gradlePluginPortal()
+        jcenter()
+        mavenCentral()
+    }
+}
+
 
 rootProject.name = "kotlin-mpp-template"
 
