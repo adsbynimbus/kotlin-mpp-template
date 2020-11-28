@@ -37,4 +37,4 @@ jobs:
         run: echo "ndk.dir=$ANDROID_HOME/ndk-bundle" > local.properties
 
       - name: Publish
-        run: gradle publish --no-configure-on-demand --no-watch-fs --no-daemon
+        run: ./gradlew publish --no-configure-on-demand --no-watch-fs --no-daemon

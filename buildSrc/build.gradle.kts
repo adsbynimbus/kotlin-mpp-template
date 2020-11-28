@@ -4,12 +4,11 @@ plugins {
 }
 
 repositories {
-    jcenter()
+    gradlePluginPortal()
     google()
 }
 
 dependencies {
     implementation("com.android.tools.build:gradle:${property("agp")}")
-    implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:${property("kgp")}")
-
+    implementation(kotlin("gradle-plugin", "${property("kgp")}"))
 }
