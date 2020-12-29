@@ -1,6 +1,5 @@
 plugins {
     `kotlin-dsl`
-    `kotlin-dsl-precompiled-script-plugins`
 }
 
 repositories {
@@ -9,6 +8,7 @@ repositories {
 }
 
 dependencies {
+    implementation(kotlin("gradle-plugin"))
+    implementation("com.android.tools.build:gradle-api:${property("agp")}")
     implementation("com.android.tools.build:gradle:${property("agp")}")
-    implementation(kotlin("gradle-plugin", "${property("kgp")}"))
 }
