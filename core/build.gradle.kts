@@ -4,4 +4,5 @@ plugins {
     `maven-publish`
 }
 
+apply<AndroidModulePlugin>()
 apply<MppModulePlugin>()

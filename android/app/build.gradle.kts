@@ -3,19 +3,11 @@ plugins {
     kotlin("android")
 }
 
-dependencies {
-    implementation(project(":core"))
-    implementation(androidx("annotation"))
-    implementation(androidx("appcompat"))
-    implementation(androidx("constraintlayout"))
-}
+apply<AndroidModulePlugin>()
 
 android {
-    compileSdk = project.compileSdk
     defaultConfig {
         applicationId = "${project.group}.android"
-        minSdk = project.minSdk
-        targetSdk = project.targetSdk
         versionCode = 1
         versionName = "${project.version}"
     }
@@ -30,13 +22,15 @@ android {
         }
     }
 
-    compileOptions {
-        sourceCompatibility(JavaVersion.VERSION_1_8)
-        targetCompatibility(JavaVersion.VERSION_1_8)
-    }
-
     kotlinOptions {
         jvmTarget = JavaVersion.VERSION_1_8.toString()
         useIR = true
     }
+}
+
+dependencies {
+    implementation(project(":core"))
+    implementation(androidx("annotation"))
+    implementation(androidx("appcompat"))
+    implementation(androidx("constraintlayout"))
 }
