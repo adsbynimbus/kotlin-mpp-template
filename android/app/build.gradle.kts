@@ -7,9 +7,10 @@ apply<AndroidModulePlugin>()
 
 android {
     defaultConfig {
-        applicationId = "${project.group}.android"
-        versionCode = 1
-        versionName = "${project.version}"
+        applicationId("${project.group}.android")
+        targetSdkVersion(project.targetSdk)
+        versionCode(1)
+        versionName("${project.version}")
     }
 
     buildFeatures {

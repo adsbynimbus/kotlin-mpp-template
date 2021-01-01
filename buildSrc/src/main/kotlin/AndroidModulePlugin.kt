@@ -24,11 +24,8 @@ internal val Project.commonExtension: CommonExtension<*,*,*,*,*,*,*,*>
 class AndroidModulePlugin: Plugin<Project> {
 
     override fun apply(project: Project) {
-        project.androidComponents.apply {
-            beforeVariants {
-                it.minSdkVersion = AndroidVersion(project.minSdk)
-                it.targetSdkVersion = AndroidVersion(project.targetSdk)
-            }
+        project.androidComponents.beforeVariants {
+            it.minSdkVersion = AndroidVersion(project.minSdk)
         }
 
         project.commonExtension.apply {
