@@ -64,3 +64,7 @@ buildSrc/gradle.properties and run the following command from the root of the pr
 ```shell script
 cmd> mklink /H "buildSrc/gradle.properties" "gradle.properties"
 ```
+
+## Troubleshooting
+
+In case of errors regarding Kotlin DSL genearated accessors in buildSrc, you might have to [manually delete IntelliJ (or Andorid Studio) cache](https://youtrack.jetbrains.com/issue/KT-43380#focus=Comments-27-4516152.0-0).
