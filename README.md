@@ -20,8 +20,8 @@ the version using tag ref that started the build.
 
 ### Dependencies
 
-Versions for all dependencies are defined in the gradle.properties file to centralize where updates
-to libraries happen. 
+Versions for all dependencies are defined in `platform/build.gradle.kts` and make use of the 
+`java-platform` Gradle plugin to centralize where updates to libraries happen. 
 
 ## One Click Deployments
 
@@ -49,18 +49,4 @@ repositories {
 dependencies {
     implementation("${owner}.mpp:core")
 }
-```
-
-### buildSrc gradle.properties symlink
-
-To simplify updates to gradle.properties, the buildSrc gradle.properties file is symlinked to the
-root of the project.
-
-#### Windows symlinks
-
-Symlink creation requires admin access. If you have admin access delete the 
-buildSrc/gradle.properties and run the following command from the root of the project
-
-```shell script
-cmd> mklink /H "buildSrc/gradle.properties" "gradle.properties"
 ```
