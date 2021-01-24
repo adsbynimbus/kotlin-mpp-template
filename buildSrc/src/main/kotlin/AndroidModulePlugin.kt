@@ -10,8 +10,7 @@ val Project.compileSdk: Int get() = intProperty("android.sdk.compile")
 val Project.minSdk: Int get() = intProperty("android.sdk.min")
 val Project.targetSdk: Int get() = intProperty("android.sdk.target")
 
-fun Project.androidx(library: String) =
-    "androidx.$library:$library:${property("androidx.$library")}"
+fun androidx(library: String) = "androidx.$library:$library"
 
 internal val Project.commonExtension: CommonExtension<*,*,*,*,*,*,*,*>
     get() = extensions.getByType(CommonExtension::class)
