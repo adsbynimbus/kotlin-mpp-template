@@ -6,3 +6,7 @@ plugins {
 
 apply<AndroidModulePlugin>()
 apply<MppModulePlugin>()
+
+dependencies {
+    api(platform(project(":platform")))
+}
