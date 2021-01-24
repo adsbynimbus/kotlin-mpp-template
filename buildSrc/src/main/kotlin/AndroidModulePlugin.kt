@@ -2,7 +2,7 @@
 
 import com.android.build.api.dsl.CommonExtension
 import org.gradle.api.*
-import org.gradle.kotlin.dsl.getByType
+import org.gradle.kotlin.dsl.configure
 
 fun Project.intProperty(propName: String) = Integer.parseInt(property(propName) as String)
 
@@ -12,13 +12,13 @@ val Project.targetSdk: Int get() = intProperty("android.sdk.target")
 
 fun androidx(library: String) = "androidx.$library:$library"
 
-internal val Project.commonExtension: CommonExtension<*,*,*,*,*,*,*,*>
-    get() = extensions.getByType(CommonExtension::class)
+inline fun Project.commonExtension(crossinline block: CommonExtension<*,*,*,*,*,*,*,*>.() -> Unit) =
+    extensions.configure(CommonExtension::class) { block() }
 
 class AndroidModulePlugin: Plugin<Project> {
 
     override fun apply(project: Project) {
-        project.commonExtension.apply {
+        project.commonExtension {
             compileSdk = project.compileSdk
             compileOptions {
                 sourceCompatibility(JavaVersion.VERSION_1_8)
