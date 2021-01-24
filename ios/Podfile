@@ -1,0 +1,19 @@
+source 'https://cdn.cocoapods.org'
+
+target 'app' do
+  # Comment the next line if you don't want to use dynamic frameworks
+  use_frameworks!
+
+  platform :ios, '13.5'
+  pod 'core', :path => '../core'
+
+  target 'appTests' do
+    inherit! :search_paths
+    # Pods for testing
+  end
+
+  target 'appUITests' do
+    # Pods for testing
+  end
+
+end
