@@ -8,7 +8,7 @@ repositories {
 }
 
 dependencies {
+    api(platform(project(":platform")))
     implementation(kotlin("gradle-plugin"))
-    implementation("com.android.tools.build:gradle-api:${property("agp")}")
-    implementation("com.android.tools.build:gradle:${property("agp")}")
+    implementation("com.android.tools.build:gradle")
 }

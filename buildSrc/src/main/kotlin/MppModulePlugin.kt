@@ -9,18 +9,18 @@ import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import java.lang.System.getenv
 
-internal val Project.kotlinMpp: KotlinMultiplatformExtension
+val Project.kotlinMpp: KotlinMultiplatformExtension
     get() = extensions.getByType(KotlinMultiplatformExtension::class)
 
-internal val Project.publishingExtension: PublishingExtension
-    get() = extensions.getByType(PublishingExtension::class)
+inline fun Project.publishingExtension(crossinline block: PublishingExtension.() -> Unit) =
+    extensions.configure(PublishingExtension::class) { block() }
 
 class MppModulePlugin : Plugin<Project> {
 
-    override fun apply(project: Project) {
-        enableCompat(project)
+    override fun apply(project: Project) = with(project) {
+        enableCompat()
 
-        project.kotlinMpp.apply {
+        kotlinMpp.apply {
             android {
                 publishLibraryVariants("release")
                 compilations.all {
@@ -45,7 +45,7 @@ class MppModulePlugin : Plugin<Project> {
                 maybeCreate("androidTest").apply {
                     dependencies {
                         implementation(kotlin("test-junit"))
-                        implementation("junit:junit:4.13")
+                        implementation("junit:junit")
                     }
                 }
                 maybeCreate("iosMain")
@@ -53,34 +53,42 @@ class MppModulePlugin : Plugin<Project> {
             }
         }
 
-        project.commonExtension.sourceSets.maybeCreate("main").apply {
-            java.srcDirs("src/androidMain/kotlin")
-            manifest.srcFile("src/androidMain/AndroidManifest.xml")
-            res.srcDirs("src/androidMain/res")
+        commonExtension {
+            sourceSets.maybeCreate("main").apply {
+                java.srcDirs("src/androidMain/kotlin")
+                manifest.srcFile("src/androidMain/AndroidManifest.xml")
+                res.srcDirs("src/androidMain/res")
+            }
         }
 
-        project.tasks.register("packForXcode", Sync::class) {
+        tasks.register<Sync>("packForXcode") {
             group = "build"
             val mode = getenv("CONFIGURATION") ?: "DEBUG"
-            val framework = project.kotlinMpp.targets.getByName(
+            val framework = kotlinMpp.targets.getByName(
                 iosTarget(getenv("SDK_NAME") ?: "iphonesimulator"),
                 KotlinNativeTarget::class
             ).binaries.getFramework(mode)
             inputs.property("mode", mode)
             dependsOn(framework.linkTask)
             from({ framework.outputDirectory })
-            into("${project.buildDir}/xcode-frameworks")
+            into("$buildDir/xcode-frameworks")
         }.also {
-            project.tasks.named("build").configure {
+            tasks.named("build").configure {
                 dependsOn(it)
             }
         }
 
-        getenv("GITHUB_REPOSITORY")?.let {
-            project.publishingExtension.repositories {
+        configurePublishing()
+    }
+}
+
+fun Project.configurePublishing() {
+    getenv("GITHUB_REPOSITORY")?.let {
+        publishingExtension {
+            repositories {
                 maven {
                     name = "github"
-                    url = project.uri("https://maven.pkg.github.com/$it")
+                    url = uri("https://maven.pkg.github.com/$it")
                     credentials(PasswordCredentials::class)
                 }
             }
@@ -91,8 +99,8 @@ class MppModulePlugin : Plugin<Project> {
 /**
  * Fixes a breaking conflict in AGP 7.0.0-alpha03 and Kotlin MPP
  */
-fun enableCompat(project: Project) {
-     project.configurations {
+fun Project.enableCompat() {
+    configurations {
         maybeCreate("androidTestApi")
         maybeCreate("androidTestDebugApi")
         maybeCreate("androidTestReleaseApi")

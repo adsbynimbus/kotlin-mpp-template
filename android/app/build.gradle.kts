@@ -30,6 +30,8 @@ android {
 }
 
 dependencies {
+    api(platform(project(":platform")))
+
     implementation(project(":core"))
     implementation(androidx("annotation"))
     implementation(androidx("appcompat"))
