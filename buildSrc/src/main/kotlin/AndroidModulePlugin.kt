@@ -12,13 +12,10 @@ val Project.targetSdk: Int get() = intProperty("android.sdk.target")
 
 fun androidx(library: String) = "androidx.$library:$library"
 
-inline fun Project.commonExtension(crossinline block: CommonExtension<*,*,*,*,*,*,*,*>.() -> Unit) =
-    extensions.configure(CommonExtension::class) { block() }
-
 class AndroidModulePlugin: Plugin<Project> {
 
     override fun apply(project: Project) {
-        project.commonExtension {
+        project.androidCommon {
             compileSdk = project.compileSdk
             compileOptions {
                 sourceCompatibility(JavaVersion.VERSION_1_8)
@@ -28,3 +25,8 @@ class AndroidModulePlugin: Plugin<Project> {
         }
     }
 }
+
+/* Helper methods to enable Kotlin script like syntax */
+
+inline fun Project.androidCommon(crossinline block: CommonExtension<*,*,*,*,*,*,*,*>.() -> Unit) =
+    extensions.configure(CommonExtension::class) { block() }

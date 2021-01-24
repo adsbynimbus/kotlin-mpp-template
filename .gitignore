@@ -17,4 +17,7 @@ build/
 schemas/
 xcuserdata/
 
-iOSInjectionProject/
+Podfile.lock
+Pods/
+*.podspec
+*.xcworkspace

@@ -2,25 +2,22 @@
 
 import org.gradle.api.*
 import org.gradle.api.credentials.PasswordCredentials
+import org.gradle.api.plugins.ExtensionAware
 import org.gradle.api.publish.PublishingExtension
-import org.gradle.api.tasks.Sync
+import org.gradle.api.tasks.Delete
 import org.gradle.kotlin.dsl.*
 import org.jetbrains.kotlin.gradle.dsl.*
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
+import org.jetbrains.kotlin.gradle.plugin.cocoapods.*
 import java.lang.System.getenv
 
-val Project.kotlinMpp: KotlinMultiplatformExtension
-    get() = extensions.getByType(KotlinMultiplatformExtension::class)
-
-inline fun Project.publishingExtension(crossinline block: PublishingExtension.() -> Unit) =
-    extensions.configure(PublishingExtension::class) { block() }
+val Project.xcodeproj get() = property("xcodeproj") as String
 
 class MppModulePlugin : Plugin<Project> {
 
-    override fun apply(project: Project) = with(project) {
+    override fun apply(project: Project): Unit = with(project) {
         enableCompat()
 
-        kotlinMpp.apply {
+        kotlin {
             android {
                 publishLibraryVariants("release")
                 compilations.all {
@@ -30,8 +27,14 @@ class MppModulePlugin : Plugin<Project> {
                     }
                 }
             }
-            ios {
-                binaries.framework()
+            ios()
+            cocoapods {
+                summary = "A Kotlin MPP Cocoapods Template Library"
+                homepage = "https://www.github.com/${getenv("GITHUB_REPOSITORY")}"
+
+                podfile = rootProject.file("$xcodeproj/Podfile")
+
+                ios.deploymentTarget = "13.5"
             }
             sourceSets.apply {
                 maybeCreate("commonMain")
@@ -53,7 +56,7 @@ class MppModulePlugin : Plugin<Project> {
             }
         }
 
-        commonExtension {
+        androidCommon {
             sourceSets.maybeCreate("main").apply {
                 java.srcDirs("src/androidMain/kotlin")
                 manifest.srcFile("src/androidMain/AndroidManifest.xml")
@@ -61,22 +64,12 @@ class MppModulePlugin : Plugin<Project> {
             }
         }
 
-        tasks.register<Sync>("packForXcode") {
-            group = "build"
-            val mode = getenv("CONFIGURATION") ?: "DEBUG"
-            val framework = kotlinMpp.targets.getByName(
-                iosTarget(getenv("SDK_NAME") ?: "iphonesimulator"),
-                KotlinNativeTarget::class
-            ).binaries.getFramework(mode)
-            inputs.property("mode", mode)
-            dependsOn(framework.linkTask)
-            from({ framework.outputDirectory })
-            into("$buildDir/xcode-frameworks")
-        }.also {
-            tasks.named("build").configure {
-                dependsOn(it)
+        tasks.register<Delete>("cleanPodBuild") {
+            arrayOf(buildDir, file("$name.podspec"), file("gen"), file("Pods")).let {
+                destroyables.register(it)
+                delete(it)
             }
-        }
+        }.also { tasks.named("clean").configure { dependsOn(it) } }
 
         configurePublishing()
     }
@@ -110,4 +103,13 @@ fun Project.enableCompat() {
     }
 }
 
-fun iosTarget(sdkName: String) = "ios" + if (sdkName.startsWith("iphoneos")) "Arm64" else "X64"
+/* Helper methods to enable Kotlin script like syntax */
+
+inline fun KotlinMultiplatformExtension.cocoapods(crossinline block: CocoapodsExtension.() -> Unit) =
+    (this as ExtensionAware).extensions.configure(CocoapodsExtension::class) { block() }
+
+inline fun Project.kotlin(crossinline block: KotlinMultiplatformExtension.() -> Unit) =
+    extensions.configure(KotlinMultiplatformExtension::class) { block() }
+
+inline fun Project.publishingExtension(crossinline block: PublishingExtension.() -> Unit) =
+    extensions.configure(PublishingExtension::class) { block() }

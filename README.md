@@ -15,7 +15,7 @@ choice.
 
 ### Project
 
-The project version defaults to `development` unless built within Github actions which will compute
+The project version defaults to `1.0-development` unless built within Github actions which will compute
 the version using tag ref that started the build.
 
 ### Dependencies
