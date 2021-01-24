@@ -29,8 +29,9 @@ jobs:
           path: |
             ~/.gradle/caches
             ~/.konan/dependencies
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle.kts') }}
           restore-keys: |
+            ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle.kts') }}
             ${{ runner.os }}-gradle-
 
       - name: Fix Android NDK
