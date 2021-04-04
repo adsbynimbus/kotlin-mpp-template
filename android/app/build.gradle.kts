@@ -3,37 +3,34 @@ plugins {
     kotlin("android")
 }
 
-apply<AndroidModulePlugin>()
+group = defaultGroup
+version = defaultVersion
 
 android {
+    compileSdkVersion(Android.compileSdk)
     defaultConfig {
-        applicationId("${project.group}.android")
-        targetSdkVersion(project.targetSdk)
+        applicationId("$group.android")
+        minSdkVersion(Android.minSdk)
+        targetSdkVersion(Android.targetSdk)
         versionCode(1)
-        versionName("${project.version}")
+        versionName("$version")
     }
 
     buildFeatures {
         viewBinding = true
     }
 
-    buildTypes {
-        getByName("release") {
-            isMinifyEnabled = false
-        }
+    val release by buildTypes.getting {
+        isMinifyEnabled = false
     }
 
     kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_1_8.toString()
+        jvmTarget = "${Jvm.target}"
         useIR = true
     }
 }
 
 dependencies {
-    api(platform(project(":platform")))
-
     implementation(project(":core"))
-    implementation(androidx("annotation"))
-    implementation(androidx("appcompat"))
-    implementation(androidx("constraintlayout"))
+    implementation(libs.bundles.androidx)
 }
