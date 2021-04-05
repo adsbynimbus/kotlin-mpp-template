@@ -1,15 +1,14 @@
 @file:Suppress("UnstableApiUsage")
 
+enableFeaturePreview("VERSION_CATALOGS")
+
 dependencyResolutionManagement {
     repositories {
         google()
-        jcenter()
+        mavenCentral()
     }
 }
 
-
 rootProject.name = "kotlin-mpp-template"
 
-include(":android:app")
-include(":core")
-include(":platform")
+include("core", "android:app")
