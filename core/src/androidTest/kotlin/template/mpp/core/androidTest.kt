@@ -1,12 +1,12 @@
 package template.mpp.core
 
-import org.junit.Assert.assertTrue
-import org.junit.Test
+import kotlin.test.Test
+import kotlin.test.assertTrue
 
 class AndroidGreetingTest {
 
     @Test
     fun testExample() {
-        assertTrue("Check Android is mentioned", Platform().platform.contains("Android"))
+        assertTrue(Platform().platform.contains("Android"), "Check Android is mentioned")
     }
 }

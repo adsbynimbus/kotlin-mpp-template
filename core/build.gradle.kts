@@ -2,6 +2,7 @@ plugins {
     id("com.android.library")
     kotlin("multiplatform")
     kotlin("native.cocoapods")
+    kotlin("plugin.serialization")
     `maven-publish`
 }
 
@@ -30,11 +31,31 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
-                api(libs.bundles.core)
+                api(libs.bundles.mpp.core)
             }
         }
-        val androidMain by getting
-        val iosMain by getting
+        val commonTest by getting {
+            dependencies {
+                implementation(kotlin("test-common"))
+                implementation(kotlin("test-annotations-common"))
+            }
+        }
+        val androidMain by getting {
+            dependencies {
+                api(libs.bundles.mpp.android)
+                api(libs.bundles.android)
+            }
+        }
+        val androidTest by getting {
+            dependencies {
+                implementation(kotlin("test"))
+            }
+        }
+        val iosMain by getting {
+            dependencies {
+                api(libs.bundles.mpp.ios)
+            }
+        }
     }
 }
 
